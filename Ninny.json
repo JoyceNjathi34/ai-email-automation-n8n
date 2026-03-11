@@ -1,0 +1,738 @@
+{
+  "name": "Ninny",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        -128
+      ],
+      "id": "fa3342d9-7491-4e7f-ab42-e051ebdf469b",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "75DlbEf2y6rGJVUX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI email assistant. For each email ({{ $('Gmail Trigger').item.json.snippet }}):\n\nClassify priority:\n\nHigh → urgent, affects finances, clients, or operations.\n\nMedium → important but not urgent.\n\nLow → informational only.\n\nDetect attachment requests:\n\nLook for keywords: invoice, report, document, copy of, attachment, image, receipt.\n\nIf found: requires_attachment = true, attachment_type = detected type\n\nIf not: requires_attachment = false, attachment_type = null\n\nDraft reply:\n\nOnly if priority = High AND requires_review = true.\n\nTone: professional, clear, human. Use short paragraphs.\n\nIf attachment requested, confirm in text (e.g., “Please find the requested invoice attached.”)\n\nMedium/Low → leave draft_reply empty.\n\nOutput JSON only:\n\n{\n  \"priority\": \"High / Medium / Low\",\n  \"requires_review\": true / false,\n  \"requires_attachment\": true / false,\n  \"attachment_type\": \"invoice / report / image / receipt / other / null\",\n  \"draft_reply\": \"text\"\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        96,
+        -128
+      ],
+      "id": "3a06ae9d-2059-48cc-90ce-a022c89dc484",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        112,
+        96
+      ],
+      "id": "f7ef6b4e-5bb6-40b2-8824-c0360ecf8714",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "vtLDACRNfWCoC6Eq",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        96
+      ],
+      "id": "313247d1-907b-45c0-b371-7d5820f73bd9",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appLhJBw4QzKdUNeb",
+          "mode": "list",
+          "cachedResultName": "AI Drafts Queue",
+          "cachedResultUrl": "https://airtable.com/appLhJBw4QzKdUNeb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVIlMaXImYZfOe8",
+          "mode": "list",
+          "cachedResultName": "AI Drafts Queue",
+          "cachedResultUrl": "https://airtable.com/appLhJBw4QzKdUNeb/tblVIlMaXImYZfOe8"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Subject": "={{ $('Gmail Trigger').item.json.Subject }}",
+            "Sender": "={{ $('Gmail Trigger').item.json.From }}",
+            "Draft Reply": "={{ $json.draft_reply }}",
+            "Priority": "={{ $json.priority }}",
+            "Requires Review": "true",
+            "Approved": false,
+            "sent": "false",
+            "Attachment-type": "={{ $('Parse AI sorting').item.json.attachment_type }}",
+            "Attachment reqiured": "=true"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Email Subject",
+              "displayName": "Email Subject",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Draft Reply",
+              "displayName": "Draft Reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Requires Review",
+              "displayName": "Requires Review",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment reqiured",
+              "displayName": "Attachment reqiured",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment-type",
+              "displayName": "Attachment-type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Approved",
+              "displayName": "Approved",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment",
+              "displayName": "Attachment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "sent",
+              "displayName": "sent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        -416
+      ],
+      "id": "8f972c99-5ee2-41b8-868c-e6a635e41f79",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cKWoK70RrvTq6JLc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_8817008648415676776",
+          "Label_2809565556440818187"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        -320
+      ],
+      "id": "02d3ac2e-9271-4b04-a3ac-a130c68cef30",
+      "name": "Label High priority email",
+      "webhookId": "4be29884-43a4-45e2-bbf1-383ac2e43057",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "75DlbEf2y6rGJVUX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        -32
+      ],
+      "id": "89dd0ad5-e69a-4773-bcfc-86db93affe9b",
+      "name": "Delete low priority email",
+      "webhookId": "0c61958a-bb5a-4f68-925e-85443f4276b5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "75DlbEf2y6rGJVUX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_6078901531002474825"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        160
+      ],
+      "id": "5f3febe2-ebac-4538-b1d1-8cd6ddc36000",
+      "name": "Label medium priority email",
+      "webhookId": "8f100ecf-571a-4f4d-ba2a-81d7887248fe",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "75DlbEf2y6rGJVUX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f3f1360e-4a92-4b78-986d-8708c9df641c",
+              "leftValue": "={{ $('Parse AI sorting').item.json.priority }}",
+              "rightValue": "Low",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        64
+      ],
+      "id": "5db38115-0aa0-4fa2-94d8-90d31da4cb13",
+      "name": "IF-medium/low priority"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get AI output safely\nconst aiOutput = $input.first().json.output || $input.first().json.text;\nif (!aiOutput) {\n  throw new Error(\"AI Agent returned empty output\");\n}\n\n// Extract JSON block between first { and last }\nconst start = aiOutput.indexOf(\"{\");\nconst end = aiOutput.lastIndexOf(\"}\");\nif (start === -1 || end === -1 || end <= start) {\n  throw new Error(\"No JSON object found in AI output:\\n\" + aiOutput);\n}\n\nlet raw = aiOutput.slice(start, end + 1);\n\n// Remove any leftover markdown/code fences\nraw = raw.replace(/```json|```/gi, '').trim();\n\n// Parse JSON safely\nlet parsed = {};\ntry {\n  parsed = JSON.parse(raw);\n} catch (error) {\n  console.error(\"Raw AI output:\", raw);\n  throw new Error(\"Invalid JSON from AI Agent\");\n}\n\n// Defaults\nconst defaults = {\n  priority: \"UNKNOWN\",\n};\n\n\n// Merge parsed data with defaults\nreturn [{ json: { ...defaults, ...parsed } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -128
+      ],
+      "id": "cadab432-3d3b-4532-b1f1-37ab65fd9aad",
+      "name": "Parse AI sorting"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appLhJBw4QzKdUNeb",
+          "mode": "list",
+          "cachedResultName": "AI Drafts Queue",
+          "cachedResultUrl": "https://airtable.com/appLhJBw4QzKdUNeb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVIlMaXImYZfOe8",
+          "mode": "list",
+          "cachedResultName": "AI Drafts Queue",
+          "cachedResultUrl": "https://airtable.com/appLhJBw4QzKdUNeb/tblVIlMaXImYZfOe8"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Approved": false,
+            "Attachment reqiured": "false",
+            "Email Subject": "={{ $('Gmail Trigger').item.json.Subject }}",
+            "Sender": "={{ $('Gmail Trigger').item.json.From }}",
+            "Draft Reply": "={{ $('Parse AI sorting').item.json.draft_reply }}",
+            "Priority": "={{ $('Parse AI sorting').item.json.priority }}",
+            "Requires Review": "true",
+            "Attachment-type": "={{ $('Parse AI sorting').item.json.attachment_type }}",
+            "sent": "false"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Email Subject",
+              "displayName": "Email Subject",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Draft Reply",
+              "displayName": "Draft Reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Requires Review",
+              "displayName": "Requires Review",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment reqiured",
+              "displayName": "Attachment reqiured",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment-type",
+              "displayName": "Attachment-type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Approved",
+              "displayName": "Approved",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment",
+              "displayName": "Attachment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "sent",
+              "displayName": "sent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        -224
+      ],
+      "id": "26ddc8a5-38a0-41fc-a9fc-56461834e250",
+      "name": "Create a record1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cKWoK70RrvTq6JLc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "746e2e28-f48d-4a24-9f09-1655a3caab02",
+              "leftValue": "={{ $json.priority }}",
+              "rightValue": "High",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        -128
+      ],
+      "id": "1b80df2c-cba3-471f-b90b-b03706cbad36",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0e2d77e7-7773-43c4-a6ac-c94a00222b55",
+              "leftValue": "={{ $json.requires_attachment }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -320
+      ],
+      "id": "d2685264-388e-4e68-ae7c-0c760351071e",
+      "name": "If1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse AI sorting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Label High priority email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF-medium/low priority": {
+      "main": [
+        [
+          {
+            "node": "Delete low priority email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label medium priority email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI sorting": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF-medium/low priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record1": {
+      "main": [
+        [
+          {
+            "node": "Label High priority email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "66595b09-3aa8-4ad0-b722-f307e6a4a24d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ce44493df96cc417d553e41cb41bd84b90e2784151f4c2800d216e51a857001a"
+  },
+  "id": "T7pxQEEk263TtEeN",
+  "tags": []
+}

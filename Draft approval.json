@@ -1,0 +1,569 @@
+{
+  "name": "Draft approval",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        -368
+      ],
+      "id": "fa8df4b0-8004-4e8b-b3e0-77a170bbd93e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appLhJBw4QzKdUNeb",
+          "mode": "list",
+          "cachedResultName": "AI Drafts Queue",
+          "cachedResultUrl": "https://airtable.com/appLhJBw4QzKdUNeb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVIlMaXImYZfOe8",
+          "mode": "list",
+          "cachedResultName": "AI Drafts Queue",
+          "cachedResultUrl": "https://airtable.com/appLhJBw4QzKdUNeb/tblVIlMaXImYZfOe8"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Wach records').item.json.id }}",
+            "sent": "true"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Email Subject",
+              "displayName": "Email Subject",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Draft Reply",
+              "displayName": "Draft Reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Action plan",
+              "displayName": "Action plan",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Requires Review",
+              "displayName": "Requires Review",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Approved",
+              "displayName": "Approved",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "sent",
+              "displayName": "sent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2016,
+        -368
+      ],
+      "id": "6400a6af-47de-48d9-8172-729f3258dcd8",
+      "name": "Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cKWoK70RrvTq6JLc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appLhJBw4QzKdUNeb",
+          "mode": "list",
+          "cachedResultName": "AI Drafts Queue",
+          "cachedResultUrl": "https://airtable.com/appLhJBw4QzKdUNeb"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVIlMaXImYZfOe8",
+          "mode": "list",
+          "cachedResultName": "AI Drafts Queue",
+          "cachedResultUrl": "https://airtable.com/appLhJBw4QzKdUNeb/tblVIlMaXImYZfOe8"
+        },
+        "filterByFormula": "AND(   {Approved} = TRUE(),   {Requires Review} = \"true\" )",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        -368
+      ],
+      "id": "c7bfb9a1-c4c2-4eae-b7e9-49528e9f4eb0",
+      "name": "Wach records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cKWoK70RrvTq6JLc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Code in JavaScript').item.json.Sender }}",
+        "subject": "={{ $('Code in JavaScript').item.json['Email Subject'] }}",
+        "message": "={{ $('Code in JavaScript').item.json.formatted_email }}",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1792,
+        -464
+      ],
+      "id": "62b18e60-2238-4a7c-9944-a567a44569a0",
+      "name": "Send Approved email",
+      "webhookId": "3c9e5b6f-b2c5-4ad6-8396-fb6a990038fb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "75DlbEf2y6rGJVUX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let email = $input.first().json[\"Draft Reply\"];\n\n// Safety check\nif (!email) {\n  throw new Error(\"Draft Reply field is empty or undefined\");\n}\n\n// Convert line breaks to HTML\nemail = email.replace(/\\n\\n/g, \"<br><br>\");\nemail = email.replace(/\\n/g, \"<br>\");\n\nreturn [{\n  json: {\n    ...$input.first().json,\n    formatted_email: email\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -368
+      ],
+      "id": "e358e24b-b6ca-48f7-9792-10abc5f6b13b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "12eb2dfc-5f26-44a1-8ac8-25014cc8df3e",
+              "leftValue": "={{ $json.sent }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        -368
+      ],
+      "id": "71db2ca1-7011-4552-a452-483d6eeec3f9",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zWg7sAxxORpvvcj4kmhvseuyuOC_E2Eh32yyM-IMO0c",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zWg7sAxxORpvvcj4kmhvseuyuOC_E2Eh32yyM-IMO0c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zWg7sAxxORpvvcj4kmhvseuyuOC_E2Eh32yyM-IMO0c/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        -464
+      ],
+      "id": "4a1df923-8980-4eb3-8ced-82840c1fb7c1",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "j4j7JkdEWdiMhYjQ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7ecc4d62-20e3-46a1-9d0e-d01be2134524",
+              "leftValue": "={{ $json.file_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1344,
+        -464
+      ],
+      "id": "0538b6e2-9cf9-453b-a3ec-d411709e7a81",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.file_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1568,
+        -464
+      ],
+      "id": "e94567d0-1766-4080-849c-5402a17ed276",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "62ad8449-9585-422f-8ff5-489872abb770",
+              "leftValue": "={{ $json['Attachment reqiured'] }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -368
+      ],
+      "id": "fab24855-8939-4962-b56a-7ea4690747bf",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Wach records').item.json.Sender }}",
+        "subject": "={{ $('Wach records').item.json['Email Subject'] }}",
+        "message": "={{ $('Code in JavaScript').item.json.formatted_email }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1792,
+        -272
+      ],
+      "id": "a52a9917-db4d-421b-84e0-a034cb2ab00e",
+      "name": "Send a message",
+      "webhookId": "4e59547d-223e-40c8-b5a3-adae867eacb0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "75DlbEf2y6rGJVUX",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Wach records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wach records": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Approved email": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send Approved email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "4b2a2db1-372a-42f6-a4dc-5470a79f9a3c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ce44493df96cc417d553e41cb41bd84b90e2784151f4c2800d216e51a857001a"
+  },
+  "id": "mRQHSzR8jYgFORVg",
+  "tags": []
+}
